@@ -1,4 +1,4 @@
-# Filename : cookieclicker.py
+# Filename : grossIdleWaitTime.py
 # INFO : Calculates gross idle wait time to next achievement.
 
 """ 
@@ -59,7 +59,17 @@ def cookieReport(INFLATION, CPS, CURRENT_STOCK, TARGET_QUOTA, targetFunds, BUILD
 ##################
 
 # Constants
-BASE_COST = {'CURSOR':15, 'GRANDMA':100, 'FARM':500, 'FACTORY':300, 'MINE':10000, 'SHIPMENT':40000, 'ALCHEMY':200000, 'PORTAL':1666666, 'TIME_MACHINE':123456789, 'ANTIMATTER':3999999999}
+BASE_COST = {
+	'CURSOR':15, 
+	'GRANDMA':100, 
+	'FARM':500, 
+	'FACTORY':300, 
+	'MINE':10000, 
+	'SHIPMENT':40000, 
+	'ALCHEMY':200000, 
+	'PORTAL':1666666, 
+	'TIME_MACHINE':123456789, 
+	'ANTIMATTER':3999999999}
 INFLATION = 1.15 # building price increase ratio 
 
 # Input 
@@ -87,4 +97,4 @@ try:
 except ValueError:
 	print "Invalid input; exiting program."
 except KeyboardInterrupt:
-	print None
+	pass
