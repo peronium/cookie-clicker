@@ -1,17 +1,14 @@
 # Filename : grossIdleWaitTime.py
 # INFO : Calculates gross idle wait time to next achievement.
 
-""" 
-TODO: 
-- %s formatted output
-- single report, flexible input
-- format large/specific numbers
-- read directly from game stats?
-"""
+# TODO: %d formatted output
+# TODO: single report, flexible input
+# TODO: format large/specific numbers
+# TODO: read directly from game stats?
 
-########################
-# FUNCTION DEFINITIONS #
-########################
+"""
+FUNCTION DEFINITIONS 
+"""
 
 # Comprehensive time conversion
 def timeReport(seconds):
@@ -54,9 +51,9 @@ def cookieReport(INFLATION, CPS, CURRENT_STOCK, TARGET_QUOTA, targetFunds, BUILD
 		grossTime = cookiesToQuota / CPS
 		print "Minutes for target quota:\t", timeReport(grossTime)
 
-##################
-# INITIALIZATION #
-##################
+"""
+INITIALIZATION
+"""
 
 # Constants
 BASE_COST = {
@@ -78,9 +75,9 @@ BUILDING = 'grandma'.upper() # BASE_COST key
 CURRENT_STOCK = 150 # Minimum: 0
 TARGET_QUOTA = 200 # Minimum: 1
 
-########
-# MAIN #
-########
+"""
+MAIN
+"""
 
 print "INFO: Calculates gross idle wait time to next achievement."
 print "Cookies per second:\t", CPS, "\n"
