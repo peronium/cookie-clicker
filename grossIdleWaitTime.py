@@ -15,7 +15,7 @@ FUNCTION DEFINITIONS
 
 # Called upon KeyboardInterrupt or "Exit" input
 def handleExit():
-   print "\nExiting."
+   print "\nExiting..."
    sys.exit(1)
 
 # Comprehensive time conversion
@@ -54,8 +54,6 @@ PRECISION = 2 # rounding precision
 
 CPS = 5705693990.7 # cookies per second
 
-building = "" # BASE_COST key
-
 
 """
 MAIN
@@ -64,70 +62,79 @@ MAIN
 print "INFO: Calculates gross idle wait time to next achievement.\n"
 print "Cookies per second:\t%d" % CPS
 
+building = "" # BASE_COST dict key
 while building.upper() not in BASE_COST:
-   try: # Case: numerical (cookie) input
-      target = raw_input("Enter target:\t")
-      targetCookies = long(target)
-      building = None
-      currentStock = 0
-      targetStock = 1
-      break
-      
-   except ValueError: # Case: word (building) input
 
-      if target.lower() == "exit":
-         handleExit()
-         
-      elif target.lower() == "edit cps":
-         while True:
-            try:
-               CPS = float(raw_input("Enter new CpS: "))
-            except ValueError:
-               print "Invalid input.",
-            except KeyboardInterrupt:
-               print "Cancelling edit."
-               break
+    # Case: numerical (cookie) input
+    try: 
+        target = raw_input("Enter target:\t")
+        targetCookies = long(target)
+        building = None
+        currentStock = 0
+        targetStock = 1
+        break
 
-      else:
-         try: 
-            building = target.upper()
-            targetCookies = BASE_COST[building]
-         except KeyError:
-            print "Invalid building name. Try one of the following:\n", BASE_COST.keys(),
-            print "OR type \"Edit CpS\" or \"Exit\"."
-   except KeyboardInterrupt:
-      handleExit()
-      
+    # Case: word (building) input   
+    except ValueError:
+
+        # Exit prompt
+        if target.lower() == "exit":
+            handleExit()
+
+        # Edit CpS prompt
+        elif target.lower() == "edit cps":
+            while True:
+                try:
+                    CPS = float(raw_input("Enter new CpS: "))
+                except ValueError:
+                    print "Invalid input.",
+                except KeyboardInterrupt:
+                    print "Cancelling edit."
+                    break
+
+        # Building input
+        else:
+            try: 
+                building = target.upper()
+                targetCookies = BASE_COST[building]
+            except KeyError:
+                print "Invalid building name. Try one of the following:\n", BASE_COST.keys(),
+                print "OR type \"Edit CpS\" or \"Exit\"."
+
+    except KeyboardInterrupt:
+        handleExit()
+
+# Determine target cookies wrt building
 if isinstance(building, str): # Building entered, not cookies
-   while True: # Determine target wrt type
-      try:
-         currentStock = int(raw_input("Have: "))
-         targetStock = int(raw_input("Need: "))
-         if targetStock > currentStock: # inputs are valid
-            break
-         else:
-            print "\"Need\" value must be greater than \"Have\" value. Please try again."
-      except ValueError:
-         print "Invalid input. Please try again."
-      except KeyboardInterrupt:
-         handleExit()
-   print "(%d more)\n" % (targetStock - currentStock)
-   targetCookies = long(BASE_COST[building] * INFLATION ** currentStock) # cost of next building upgrade
+    while True:
+        try:
+            currentStock = int(raw_input("Have: "))
+            targetStock = int(raw_input("Need: "))
+            if targetStock > currentStock: # inputs are valid
+                break
+            else:
+                print "\"Need\" value must be greater than \"Have\" value. Please try again."
+        except ValueError:
+            print "Invalid input. Please try again."
+        except KeyboardInterrupt:
+            handleExit()
+    print "(%d more)\n" % (targetStock - currentStock)
+    targetCookies = long(BASE_COST[building] * INFLATION ** currentStock) # cost of next building upgrade
 
 
  # Calculate gross cost (assume inBank = 0)
- i = 0 # buildings to quota
- cookiesToQuota = 0
- while i < (targetStock - currentStock):
-     cookiesToQuota = cookiesToQuota + targetCookies * (INFLATION ** i)
-     i = i + 1
- if targetStock - currentStock > 1:
-     print "Next item cost: \t%d" % targetCookies
-     print "Cumulative cost:\t%d (%d)" % (long(cookiesToQuota), int(cookiesToQuota))
- 
- # Calculate gross idle wait time
- grossTime = targetCookies / CPS
- print "Minutes for next purchase:\t", timeReport(grossTime, PRECISION),
- if targetStock - currentStock > 1:
-     grossTime = cookiesToQuota / CPS
-     print "Minutes for target quota:\t", timeReport(grossTime, PRECISION)
+i = 0 # buildings to quota
+cookiesToQuota = 0
+while i < (targetStock - currentStock):
+    cookiesToQuota = cookiesToQuota + targetCookies * (INFLATION ** i)
+    i = i + 1
+if targetStock - currentStock > 1:
+    print "Next item cost: \t%d" % targetCookies
+    print "Cumulative cost:\t%d (%d)" % (long(cookiesToQuota), int(cookiesToQuota))
+
+# Calculate gross idle wait time
+grossTime = targetCookies / CPS
+print "Minutes for next purchase:\t", timeReport(grossTime, PRECISION),
+if targetStock - currentStock > 1:
+    grossTime = cookiesToQuota / CPS
+    print "Minutes for target quota:\t", timeReport(grossTime, PRECISION)
