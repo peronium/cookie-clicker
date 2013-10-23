@@ -1,10 +1,11 @@
-# Filename : grossIdleWaitTime.py
-# Repository : cookie-clicker
-# INFO : Calculates gross idle wait time to next achievement.
+# Filename:     grossIdleWaitTime.py
+# Repository:   cookie-clicker
+# Creator:      peronium
+# Summary:      Calculates gross idle wait time to next achievement.
 
-# TODO: order keys in ouput
-# TODO: fix rounding: precision; format large/specific numbers
-# TODO: improve runtime speed
+# TODO: order dict keys in ouput
+# TODO: format/align numbers
+# TODO: refactor for speed
 # TODO: read directly from game stats?
 
 import sys
@@ -20,22 +21,23 @@ def handleExit():
 
 # Comprehensive time conversion
 def timeReport(seconds, PRECISION):
-    minutes = round(seconds / 60.0, PRECISION)
-    hours = round(seconds / 3600.0, PRECISION)
     days = round(seconds / 86400.0, PRECISION)
+    hours = round(seconds / 3600.0, PRECISION)
+    minutes = round(seconds / 60.0, PRECISION)
+    seconds = round(seconds, PRECISION)
     if minutes < 1:
-        print "%d secs" % seconds,
+        print "%r secs" % seconds,
     elif minutes < 5:
-        print "%d mins\t(%d seconds)" % (minutes, seconds),
+        print "%r mins\t(%r seconds)" % (minutes, seconds),
     elif days < 1.5:
-        print "%d mins\t(%d hours)" % (minutes, hours),
+        print "%r mins\t(%r hours)" % (minutes, hours),
     else:
-        print "%d hours\t(%d DAYS)" % (hours, days),
+        print "%r hours\t(%r DAYS)" % (hours, days),
     return "\n"
 
 
 """
-INITIALIZATION
+CONSTANTS
 """
  
 BASE_COST = {
@@ -52,7 +54,8 @@ BASE_COST = {
 INFLATION = 1.15 # building price increase ratio
 PRECISION = 2 # rounding precision
 
-CPS = 5705693990.7 # cookies per second
+cps = 7461297260.1 # cookies per second
+# Technically not constant - can be overwritten in runtime
 
 
 """
@@ -60,7 +63,7 @@ MAIN
 """
 
 print "INFO: Calculates gross idle wait time to next achievement.\n"
-print "Cookies per second:\t%d" % CPS
+print "Cookies per second:\t%r\t(Type \"Edit CpS\" to change.)" % cps
 
 building = "" # BASE_COST dict key
 while building.upper() not in BASE_COST:
@@ -85,11 +88,12 @@ while building.upper() not in BASE_COST:
         elif target.lower() == "edit cps":
             while True:
                 try:
-                    CPS = float(raw_input("Enter new CpS: "))
+                    cps = float(raw_input("Enter new CpS: "))
+                    break
                 except ValueError:
                     print "Invalid input.",
                 except KeyboardInterrupt:
-                    print "Cancelling edit."
+                    print "Cancelling edit..."
                     break
 
         # Building input
@@ -104,37 +108,38 @@ while building.upper() not in BASE_COST:
     except KeyboardInterrupt:
         handleExit()
 
-# Determine target cookies wrt building
+# Determine target cookies wrt building upgrade(s)
 if isinstance(building, str): # Building entered, not cookies
     while True:
         try:
-            currentStock = int(raw_input("Have: "))
-            targetStock = int(raw_input("Need: "))
+            currentStock = int(raw_input("\tHave:\t"))
+            targetStock = int(raw_input("\tNeed:\t"))
             if targetStock > currentStock: # inputs are valid
                 break
             else:
-                print "\"Need\" value must be greater than \"Have\" value. Please try again."
+                print ("\"Need\" value must be greater than \"Have\" value. "
+                    "Please try again.")
         except ValueError:
             print "Invalid input. Please try again."
         except KeyboardInterrupt:
             handleExit()
-    print "(%d more)\n" % (targetStock - currentStock)
-    targetCookies = long(BASE_COST[building] * INFLATION ** currentStock) # cost of next building upgrade
+    print "\t\t(%d more)" % (targetStock - currentStock)
+    targetCookies = long(BASE_COST[building] * INFLATION ** currentStock)
 
 
- # Calculate gross cost (assume inBank = 0)
+# Calculate gross cost (assume inBank = 0)
 i = 0 # buildings to quota
 cookiesToQuota = 0
 while i < (targetStock - currentStock):
     cookiesToQuota = cookiesToQuota + targetCookies * (INFLATION ** i)
     i = i + 1
+print "Next item cost: \t%d" % targetCookies
 if targetStock - currentStock > 1:
-    print "Next item cost: \t%d" % targetCookies
-    print "Cumulative cost:\t%d (%d)" % (long(cookiesToQuota), int(cookiesToQuota))
+    print "Cumulative cost:\t%d" % long(cookiesToQuota)
 
 # Calculate gross idle wait time
-grossTime = targetCookies / CPS
+grossTime = targetCookies / cps
 print "Minutes for next purchase:\t", timeReport(grossTime, PRECISION),
 if targetStock - currentStock > 1:
-    grossTime = cookiesToQuota / CPS
+    grossTime = cookiesToQuota / cps
     print "Minutes for target quota:\t", timeReport(grossTime, PRECISION)
