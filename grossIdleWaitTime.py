@@ -15,7 +15,7 @@ FUNCTION DEFINITIONS
 
 # Called upon KeyboardInterrupt or "Exit" input
 def handleExit():
-   print "Exiting."
+   print "\nExiting."
    sys.exit(1)
 
 # Comprehensive time conversion
@@ -95,14 +95,21 @@ while building.upper() not in BASE_COST:
       if target.lower() == "exit":
          handleExit()
       elif target.lower() == "edit cps":
-         CPS = float(raw_input("Enter new CpS: "))
+         while True:
+            try:
+               CPS = float(raw_input("Enter new CpS: "))
+            except ValueError:
+               print "Invalid input.",
+            except KeyboardInterrupt:
+               print ""
+               break
       else:
          try: 
             building = target.upper()
             targetCookies = BASE_COST[building]
          except KeyError:
             print "Invalid building name. Try one of the following:\n", BASE_COST.keys(),
-            print "OR type \"Edit CpS\" or \"Exit\" ."
+            print "OR type \"Edit CpS\" or \"Exit\"."
    except KeyboardInterrupt:
       handleExit()
       
