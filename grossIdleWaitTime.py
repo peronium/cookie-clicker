@@ -33,7 +33,7 @@ def timeReport(seconds, PRECISION):
         print "%r mins\t(%r hours)" % (minutes, hours),
     else:
         print "%r hours\t(%r DAYS)" % (hours, days),
-    return "\n"
+    return ""
 
 
 """
@@ -54,9 +54,8 @@ BASE_COST = {
 INFLATION = 1.15 # building price increase ratio
 PRECISION = 2 # rounding precision
 
-cps = 7461297260.1 # cookies per second
+cps = 0.0 # cookies per second
 # Technically not constant - can be overwritten in runtime
-
 
 """
 MAIN
@@ -88,8 +87,11 @@ while building.upper() not in BASE_COST:
         elif target.lower() == "edit cps":
             while True:
                 try:
-                    cps = float(raw_input("Enter new CpS: "))
-                    break
+                    cps = float(raw_input("Enter new CpS:\t"))
+                    if cps > 0:
+                        break
+                    else:
+                        print "CpS must be greater than 0."
                 except ValueError:
                     print "Invalid input.",
                 except KeyboardInterrupt:
@@ -139,7 +141,7 @@ if targetStock - currentStock > 1:
 
 # Calculate gross idle wait time
 grossTime = targetCookies / cps
-print "Minutes for next purchase:\t", timeReport(grossTime, PRECISION),
+print "Minutes for next purchase:\t", timeReport(grossTime, PRECISION)
 if targetStock - currentStock > 1:
     grossTime = cookiesToQuota / cps
     print "Minutes for target quota:\t", timeReport(grossTime, PRECISION)
